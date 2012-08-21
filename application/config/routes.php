@@ -38,6 +38,39 @@
 |
 */
 
+$route = array();
+
+switch (strtoupper($_SERVER['REQUEST_METHOD']))
+{
+	case 'GET':
+		$route['trackers'] = 'trackers/index';
+		$route['trackers/(:any)'] = 'trackers/show/$2';
+		$route['trackers/(:any)/values'] = 'values/index/$2';
+		$route['trackers/(:any)/values/(:any)'] = 'values/show/$2/$3';
+		break;
+
+	case 'POST':
+		$route['trackers'] = 'trackers/create';
+		$route['trackers/(:any)/values'] = 'values/create/$2';
+		break;
+
+	case 'PUT':
+		$route['trackers/(:any)'] = 'trackers/update/$2';
+		$route['trackers/(:any)/values/(:any)'] = 'values/update/$2/$3';
+		break;
+
+	case 'DELETE':
+		$route['trackers/(:any)'] = 'trackers/delete/$2';
+		$route['trackers/(:any)/values/(:any)'] = 'values/delete/$2/$3';
+		break;
+}
+
+foreach ($route as $key => $val)
+{
+	$route['(v[0-9]+\/)?' . $key . '(\.[a-zA-Z0-9]+)?'] = 'api_router/index/$1/' . $route[$key];
+	unset($route[$key]);
+}
+
 $route['default_controller'] = "welcome";
 $route['404_override'] = '';
 

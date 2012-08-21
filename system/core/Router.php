@@ -225,14 +225,14 @@ class CI_Router {
 	function _set_request($segments = array())
 	{
 		$segments = $this->_validate_request($segments);
-
+		
 		if (count($segments) == 0)
 		{
 			return $this->_set_default_controller();
 		}
 
 		$this->set_class($segments[0]);
-
+		
 		if (isset($segments[1]))
 		{
 			// A standard method request
@@ -370,13 +370,13 @@ class CI_Router {
 		{
 			return $this->_set_request(explode('/', $this->routes[$uri]));
 		}
-
+		
 		// Loop through the route array looking for wild-cards
 		foreach ($this->routes as $key => $val)
 		{
 			// Convert wild-cards to RegEx
 			$key = str_replace(':any', '.+', str_replace(':num', '[0-9]+', $key));
-
+			
 			// Does the RegEx match?
 			if (preg_match('#^'.$key.'$#', $uri))
 			{
