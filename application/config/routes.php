@@ -44,9 +44,8 @@ switch (strtoupper($_SERVER['REQUEST_METHOD']))
 {
 	case 'GET':
 		$route['trackers'] = 'trackers/index';
-		$route['trackers/(:any)'] = 'trackers/show/$2';
 		$route['trackers/(:any)/values'] = 'values/index/$2';
-		$route['trackers/(:any)/values/(:any)'] = 'values/show/$2/$3';
+		$route['trackers/(:any)'] = 'trackers/show/$2';
 		break;
 
 	case 'POST':
@@ -56,12 +55,10 @@ switch (strtoupper($_SERVER['REQUEST_METHOD']))
 
 	case 'PUT':
 		$route['trackers/(:any)'] = 'trackers/update/$2';
-		$route['trackers/(:any)/values/(:any)'] = 'values/update/$2/$3';
 		break;
 
 	case 'DELETE':
 		$route['trackers/(:any)'] = 'trackers/delete/$2';
-		$route['trackers/(:any)/values/(:any)'] = 'values/delete/$2/$3';
 		break;
 }
 

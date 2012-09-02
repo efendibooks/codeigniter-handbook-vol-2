@@ -5,8 +5,7 @@ class Trackers extends MY_Controller
 	public function __construct()
 	{
 		parent::__construct();
-
-		$this->load->database();
+		
 		$this->load->model('tracker_model', 'tracker');
 	}
 
@@ -22,8 +21,8 @@ class Trackers extends MY_Controller
 
 	public function create()
 	{
-		$id = $this->input->post('id');
-		$name = $this->input->post('name');
+		$id = $this->params['id'];
+		$name = $this->params['name'];
 
 		$tracker = array(
 			'id' 	=> $id,
@@ -45,12 +44,18 @@ class Trackers extends MY_Controller
 		}
 		else
 		{
-			$name = $this->input->post('name');
+			$name = $this->params['name'];
 
 			$this->tracker->update($id, array( 'name' => $name ));
 
 			$tracker->name = $name;
 			$this->data = $tracker;
 		}
+	}
+
+	public function delete($id)
+	{
+		$this->status_code = 204;
+		$this->tracker->delete($id);
 	}
 }

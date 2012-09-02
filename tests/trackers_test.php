@@ -1,53 +1,74 @@
 <?php
 
-class Trackers_test extends PHPUnit_Framework_TestCase
-{
-	protected $base_url = 'http://localhost/efendibooks/codeigniter-handbook-vol-2-code/index.php/';
-	protected $access_token = '';
-	protected $shared_secret = '';
+namespace API\Tests;
 
+class Trackers extends TestCase
+{
 	/**
 	 * GET /trackers
 	 */
 	public function test_get_trackers()
 	{
+		$tracker = (object)array( 'id' => 'website_visits', 'name' => 'Website Visits' );
 		$request = $this->request('GET', 'trackers');
 
 		$this->assertEquals(200, $request['info']['http_code']);
-		$this->assertType('array', $request['body']->result);
-		$this->assertContains((object)array( 'id' => 'website_visits', 'name' => 'Website Visits' ), $request['body']->result);
+		$this->assertInternalType('array', $request['body']->result);
+		$this->assertTrue(in_array($tracker, $request['body']->result));
 	}
 
-	protected function request($method, $path, $params = array())
+	/**
+	 * GET /trackers/website_visits
+	 */
+	public function test_get_tracker()
 	{
-		$curl = curl_init($this->base_url . $path);
+		$request = $this->request('GET', 'trackers/website_visits');
 
-		curl_setopt($curl, CURLOPT_CUSTOMREQUEST, $method);
-		curl_setopt($curl, CURLOPT_POSTFIELDS, $params);
-		curl_setopt($curl, CURLOPT_RETURNTRANSFER, TRUE);
+		$this->assertEquals(200, $request['info']['http_code']);
+		$this->assertEquals('website_visits', $request['body']->result->id);
+		$this->assertEquals('Website Visits', $request['body']->result->name);
 
-		$headers = array();
-		$headers[] = 'Accept: application/json; version=v1';
-		$headers[] = 'X-Access-Token: ' . $this->access_token;
+		$request = $this->request('GET', 'trackers/testtesttest123');
+		$this->assertEquals(404, $request['info']['http_code']);
+	}
 
-		$timestamp = time();
+	/**
+	 * POST /trackers
+	 */
+	public function test_post_trackers()
+	{
+		$request = $this->request('POST', 'trackers', array(
+			'id' => 'new_tracker',
+			'name' => 'New Tracker'
+		));
 
-		$hash = $path . http_build_query($params);
-		$hash .= $timestamp . $this->shared_secret;
+		$this->assertEquals(201, $request['info']['http_code']);
+		$this->assertEquals('new_tracker', $request['body']->result->id);
+		$this->assertEquals('New Tracker', $request['body']->result->name);
+	}
 
-		$signature = sha1($hash);
+	/**
+	 * PUT /trackers/new_tracker
+	 */
+	public function test_put_trackers()
+	{
+		$request = $this->request('PUT', 'trackers/new_tracker', array(
+			'name' => 'Another New Tracker'
+		));
 
-		$headers[] = 'X-Request-Timestamp: ' . $timestamp;
-		$headers[] = 'X-Request-Signature: ' . $signature;
+		$this->assertEquals(200, $request['info']['http_code']);
+		$this->assertEquals('new_tracker', $request['body']->result->id);
+		$this->assertEquals('Another New Tracker', $request['body']->result->name);
+	}
 
-		curl_setopt($curl, CURLOPT_HTTPHEADER, $headers);
+	/**
+	 * DELETE /trackers/new_tracker
+	 */
+	public function test_delete_trackers()
+	{
+		$request = $this->request('DELETE', 'trackers/new_tracker');
 
-		$result = curl_exec($curl);
-		$info = curl_getinfo($curl);
-
-		return array(
-			'info' => $info,
-			'body' => json_decode($result)
-		);
+		$this->assertEquals(204, $request['info']['http_code']);
+		$this->assertTrue(is_null($request['body']));
 	}
 }
