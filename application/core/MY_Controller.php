@@ -255,7 +255,7 @@ class MY_Controller extends CI_Controller
 
 	protected function _calculate_signature($path, $timestamp)
 	{
-		$hash = $path . http_build_query($_GET) . http_build_query($this->params);
+		$hash = $path . http_build_query($this->params);
 		$hash .= $timestamp . $this->client->shared_secret;
 		
 		return sha1($hash);
